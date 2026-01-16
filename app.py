@@ -138,7 +138,7 @@ HTML = """
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>フリマ損益管理</title>
+<title>うんち💩</title>
 
 <!-- iPhoneホーム画面アイコン対応 -->
 <link rel="apple-touch-icon" sizes="180x180" href="/static/icon.png">
@@ -616,7 +616,7 @@ input:focus, select:focus {
 <div class="mobile-container">
     <!-- ヘッダー -->
     <div class="header">
-        <h1>💰 フリマ損益管理</h1>
+        <h1>💩　うんち</h1>
         <div class="subtitle">商品を管理して利益を最大化</div>
         {% if use_db %}
         <div class="db-status">🗄️ データ永続化済み</div>
