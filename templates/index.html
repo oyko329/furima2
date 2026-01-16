@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>フリマ出品管理</title>
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='icon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>フリマ出品管理</h1>
+        <form id="item-form">
+            <input type="text" id="item-name" placeholder="商品名" required>
+            <input type="number" id="purchase-price" placeholder="仕入れ価格" required>
+            <input type="number" id="sale-price" placeholder="販売価格" required>
+            
+            <div class="date-input-group">
+                <label class="guide-text">購入日を選択してください</label>
+                <input type="date" id="purchase-date" required>
+            </div>
+            
+            <div class="date-input-group">
+                <label class="guide-text">販売日を選択してください</label>
+                <input type="date" id="sale-date">
+            </div>
+
+            <select id="purchase-source">
+                <option value="" disabled selected>仕入れ先を選択</option>
+                <option value="店舗">店舗</option>
+                <option value="ネット">ネット</option>
+                <option value="その他">その他</option>
+            </select>
+
+            <select id="category">
+                <option value="" disabled selected>商品の分類を選択</option>
+                <option value="家電">家電</option>
+                <option value="衣服">衣服</option>
+                <option value="雑貨">雑貨</option>
+            </select>
+
+            <select id="sale-platform">
+                <option value="" disabled selected>販売プラットフォームを選択</option>
+                <option value="メルカリ">メルカリ</option>
+                <option value="ラクマ">ラクマ</option>
+                <option value="ヤフオク">ヤフオク</option>
+            </select>
+
+            <button type="submit" id="add-btn">追加</button>
+        </form>
+
+        <ul id="item-list"></ul>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
