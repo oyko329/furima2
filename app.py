@@ -60,11 +60,14 @@ HTML = """
 * { box-sizing: border-box; }
 body { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif; background: #fff0f6; margin: 0; padding: 16px; line-height: 1.4; }
 
-/* レイアウトの切り分け */
-/* 登録・編集UI（縦長固定） */
-.vertical-container { width: 100%; max-width: 400px; margin: 0 auto 30px auto; }
-/* 一覧・グラフUI（横長） */
-.horizontal-container { width: 100%; max-width: 1400px; margin: 0 auto; }
+/* メインレイアウト：左側フォーム、右側データ */
+.main-layout { display: flex; gap: 20px; max-width: 1800px; margin: 0 auto; }
+
+/* 左側エリア（縦配置の登録・編集UI） */
+.left-sidebar { width: 350px; flex-shrink: 0; }
+
+/* 右側エリア（商品データとグラフ） */
+.right-content { flex: 1; min-width: 0; }
 
 form, .card, .table-wrapper { background: white; border-radius: 24px; box-shadow: 0 12px 32px rgba(255,105,180,0.15); padding: 16px; margin-bottom: 20px; }
 h2 { margin-top: 0; color: #d63384; font-size: 18px; text-align: center; }
@@ -78,6 +81,26 @@ button { background: #ff6fae; color: white; border: none; cursor: pointer; font-
 table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 900px; }
 th, td { border-bottom: 1px solid #f8d7e8; padding: 10px 5px; text-align: center; vertical-align: middle; }
 th { background: #fff5f9; color: #c2255c; font-weight: bold; position: sticky; top: 0; z-index: 10; }
+
+/* 商品名の省略表示 */
+.product-name { 
+    max-width: 150px; 
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+.product-name:hover {
+    color: #ff6fae;
+}
+.product-name.expanded {
+    white-space: normal;
+    overflow: visible;
+    max-width: none;
+}
 
 .summary { font-size: 22px; text-align: right; color: #d63384; margin-top: 10px; font-weight: bold; }
 .delete { cursor: pointer; font-size: 20px; color: #dc3545; text-decoration: none; }
@@ -96,147 +119,162 @@ canvas { width: 100% !important; max-height: 350px; }
 .date-guide { font-size: 11px; color: #888; display: block; margin-bottom: 4px; padding-left: 4px; }
 
 /* 編集フォームのコンテナ（縦長） */
-.edit-form-wrapper { display: none; background: #fff9fc; border: 3px solid #ff6fae; border-radius: 24px; padding: 20px; margin-bottom: 30px; }
+.edit-form-wrapper { display: none; background: #fff9fc; border: 3px solid #ff6fae; border-radius: 24px; padding: 20px; margin-bottom: 20px; }
+
+/* レスポンシブ対応：小さい画面では縦並び */
+@media (max-width: 1024px) {
+    .main-layout { flex-direction: column; }
+    .left-sidebar { width: 100%; max-width: 500px; margin: 0 auto; }
+}
 </style>
 </head>
 <body>
 
-<div class="vertical-container">
-    <div class="card">
-        <h2>商品登録</h2>
-        <form method="post" action="/add">
-            <select name="buy_platform" required>
-                <option value="">購入先を選択</option>
-                <option>お店</option><option>SHEIN</option><option>TEMU</option><option>アリエク</option><option>百均</option>
-            </select>
-            <select name="category" required>
-                <option value="">分類を選択</option>
-                <option>ガチャ</option><option>ステッカー</option><option>服</option><option>文房具</option><option>雑貨</option>
-            </select>
-            <input name="name" placeholder="商品名" required>
-            
-            <span class="date-guide">購入日を選択してください</span>
-            <input type="date" name="buy_date" required>
-            
-            <span class="date-guide">販売日を選択してください（任意）</span>
-            <input type="date" name="sell_date">
-            
-            <input name="buy_price" type="number" placeholder="仕入価格" required>
-            <input name="sell_price" type="number" placeholder="販売価格">
-            <input name="shipping" type="number" placeholder="送料">
-            <select name="sell_site">
-                <option value="">販売状況（未選択なら未売却）</option>
-                <option>ラクマ</option><option>ヤフーフリマ</option><option>メルカリ</option>
-            </select>
-            <button type="submit">保存する</button>
-        </form>
-    </div>
-</div>
-
-<div class="vertical-container">
-    <div id="editWrapper" class="edit-form-wrapper">
-        <h2>商品情報編集</h2>
-        <form method="post" action="/edit">
-            <input type="hidden" id="edit_id" name="id">
-            
-            <span class="date-guide">商品名（直接入力）</span>
-            <input type="text" id="edit_name" name="name" required>
-            
-            <span class="date-guide">仕入れ価格（直接入力）</span>
-            <input type="number" id="edit_buy_price" name="buy_price" required>
-
-            <span class="date-guide">販売価格（直接入力）</span>
-            <input type="number" id="edit_sell_price" name="sell_price">
-
-            <span class="date-guide">買ったところ（分野から選択）</span>
-            <select id="edit_buy_platform" name="buy_platform" required>
-                <option>お店</option><option>SHEIN</option><option>TEMU</option><option>アリエク</option><option>百均</option>
-            </select>
-
-            <span class="date-guide">商品の分類（タグから選択）</span>
-            <select id="edit_category" name="category" required>
-                <option>ガチャ</option><option>ステッカー</option><option>服</option><option>文房具</option><option>雑貨</option>
-            </select>
-
-            <span class="date-guide">販売状況（プラットフォームから選択）</span>
-            <select id="edit_sell_site" name="sell_site">
-                <option value="">未売却</option>
-                <option>ラクマ</option><option>ヤフーフリマ</option><option>メルカリ</option>
-            </select>
-
-            <button type="submit">更新を保存</button>
-            <button type="button" onclick="hideEdit()" style="background:#6c757d;">キャンセル</button>
-        </form>
-    </div>
-</div>
-
-<div class="horizontal-container">
-    <h2>商品一覧</h2>
-    <div class="table-wrapper">
-        <table>
-            <thead>
-                <tr>
-                    <th>購入先</th><th>分類</th><th>商品名</th><th>状況</th><th>購入日</th><th>売却日</th><th>仕入</th><th>販売</th><th>送料</th><th>手数料</th><th>利益</th><th>利益率</th><th>操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for d in data %}
-                <tr>
-                    <td><span class="tag" style="background: {{ platform_colors.get(d.buy_platform, '#6c757d') }}">{{ d.buy_platform }}</span></td>
-                    <td><span class="tag" style="background: {{ category_colors.get(d.category, '#28a745') }}">{{ d.category }}</span></td>
-                    <td style="font-weight: bold;">{{ d.name }}</td>
-                    <td>
-                        {% if d.sell_site %}
-                        <span class="tag status-sold">{{ d.sell_site }}</span>
-                        {% else %}
-                        <span class="tag status-unsold">未売</span>
-                        {% endif %}
-                    </td>
-                    <td>{{ d.buy_date or '-' }}</td>
-                    <td>{{ d.sell_date or '-' }}</td>
-                    <td>¥{{ "{:,.0f}".format(d.buy_price) }}</td>
-                    <td>{{ "¥{:,.0f}".format(d.sell_price) if d.sell_price else '-' }}</td>
-                    <td>{{ "¥{:,.0f}".format(d.shipping) if d.shipping else '-' }}</td>
-                    <td>{{ "¥{:,.0f}".format(d.fee) if d.sell_site else '-' }}</td>
-                    <td class="{{ 'profit-positive' if d.profit >= 0 else 'profit-negative' }}">
-                        {{ "¥{:,.0f}".format(d.profit) if d.sell_site else '-' }}
-                    </td>
-                    <td class="{{ 'profit-positive' if d.profit >= 0 else 'profit-negative' }}">
-                        {{ d.rate ~ '%' if d.sell_site else '-' }}
-                    </td>
-                    <td>
-                        <span class="edit" onclick='showEdit({{ d|tojson }})'>✏️</span>
-                        <a href="/delete/{{ d.id }}" class="delete" onclick="return confirm('本当に削除しますか？')">🗑</a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    
-    <div class="summary">総利益: ¥{{ "{:,.0f}".format(total_profit) }}</div>
-
-    <div class="dashboard-grid">
+<div class="main-layout">
+    <!-- 左側: 商品登録・編集UI -->
+    <div class="left-sidebar">
         <div class="card">
-            <h2>購入元別 平均利益率</h2>
-            <canvas id="bar"></canvas>
+            <h2>商品登録</h2>
+            <form method="post" action="/add">
+                <select name="buy_platform" required>
+                    <option value="">購入先を選択</option>
+                    <option>お店</option><option>SHEIN</option><option>TEMU</option><option>アリエク</option><option>百均</option>
+                </select>
+                <select name="category" required>
+                    <option value="">分類を選択</option>
+                    <option>ガチャ</option><option>ステッカー</option><option>服</option><option>文房具</option><option>雑貨</option>
+                </select>
+                <input name="name" placeholder="商品名" required>
+                
+                <span class="date-guide">購入日を選択してください</span>
+                <input type="date" name="buy_date" required>
+                
+                <span class="date-guide">販売日を選択してください（任意）</span>
+                <input type="date" name="sell_date">
+                
+                <input name="buy_price" type="number" placeholder="仕入価格" required>
+                <input name="sell_price" type="number" placeholder="販売価格">
+                <input name="shipping" type="number" placeholder="送料">
+                <select name="sell_site">
+                    <option value="">販売状況（未選択なら未売却）</option>
+                    <option>ラクマ</option><option>ヤフーフリマ</option><option>メルカリ</option>
+                </select>
+                <button type="submit">保存する</button>
+            </form>
         </div>
 
-        <div class="card">
-            <h2>販売比率（サイト別分類）</h2>
-            <div style="display: flex; flex-wrap: wrap; justify-content: space-around; gap: 10px;">
-                {% for site, pdata in sell_pies.items() %}
-                <div style="width: 150px; text-align: center;">
-                    <small>{{ site }}</small>
-                    <canvas id="sell_{{ loop.index }}"></canvas>
+        <div id="editWrapper" class="edit-form-wrapper">
+            <h2>商品情報編集</h2>
+            <form method="post" action="/edit">
+                <input type="hidden" id="edit_id" name="id">
+                
+                <span class="date-guide">商品名（直接入力）</span>
+                <input type="text" id="edit_name" name="name" required>
+                
+                <span class="date-guide">仕入れ価格（直接入力）</span>
+                <input type="number" id="edit_buy_price" name="buy_price" required>
+
+                <span class="date-guide">販売価格（直接入力）</span>
+                <input type="number" id="edit_sell_price" name="sell_price">
+
+                <span class="date-guide">買ったところ（分野から選択）</span>
+                <select id="edit_buy_platform" name="buy_platform" required>
+                    <option>お店</option><option>SHEIN</option><option>TEMU</option><option>アリエク</option><option>百均</option>
+                </select>
+
+                <span class="date-guide">商品の分類（タグから選択）</span>
+                <select id="edit_category" name="category" required>
+                    <option>ガチャ</option><option>ステッカー</option><option>服</option><option>文房具</option><option>雑貨</option>
+                </select>
+
+                <span class="date-guide">販売状況（プラットフォームから選択）</span>
+                <select id="edit_sell_site" name="sell_site">
+                    <option value="">未売却</option>
+                    <option>ラクマ</option><option>ヤフーフリマ</option><option>メルカリ</option>
+                </select>
+
+                <button type="submit">更新を保存</button>
+                <button type="button" onclick="hideEdit()" style="background:#6c757d;">キャンセル</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 右側: 商品データとグラフ -->
+    <div class="right-content">
+        <h2>商品一覧</h2>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>購入先</th><th>分類</th><th>商品名</th><th>状況</th><th>購入日</th><th>売却日</th><th>仕入</th><th>販売</th><th>送料</th><th>手数料</th><th>利益</th><th>利益率</th><th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for d in data %}
+                    <tr>
+                        <td><span class="tag" style="background: {{ platform_colors.get(d.buy_platform, '#6c757d') }}">{{ d.buy_platform }}</span></td>
+                        <td><span class="tag" style="background: {{ category_colors.get(d.category, '#28a745') }}">{{ d.category }}</span></td>
+                        <td>
+                            <span class="product-name" onclick="toggleProductName(this)">{{ d.name }}</span>
+                        </td>
+                        <td>
+                            {% if d.sell_site %}
+                            <span class="tag status-sold">{{ d.sell_site }}</span>
+                            {% else %}
+                            <span class="tag status-unsold">未売</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ d.buy_date or '-' }}</td>
+                        <td>{{ d.sell_date or '-' }}</td>
+                        <td>¥{{ "{:,.0f}".format(d.buy_price) }}</td>
+                        <td>{{ "¥{:,.0f}".format(d.sell_price) if d.sell_price else '-' }}</td>
+                        <td>{{ "¥{:,.0f}".format(d.shipping) if d.shipping else '-' }}</td>
+                        <td>{{ "¥{:,.0f}".format(d.fee) if d.sell_site else '-' }}</td>
+                        <td class="{{ 'profit-positive' if d.profit >= 0 else 'profit-negative' }}">
+                            {{ "¥{:,.0f}".format(d.profit) if d.sell_site else '-' }}
+                        </td>
+                        <td class="{{ 'profit-positive' if d.profit >= 0 else 'profit-negative' }}">
+                            {{ d.rate ~ '%' if d.sell_site else '-' }}
+                        </td>
+                        <td>
+                            <span class="edit" onclick='showEdit({{ d|tojson }})'>✏️</span>
+                            <a href="/delete/{{ d.id }}" class="delete" onclick="return confirm('本当に削除しますか？')">🗑</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="summary">総利益: ¥{{ "{:,.0f}".format(total_profit) }}</div>
+
+        <div class="dashboard-grid">
+            <div class="card">
+                <h2>購入元別 平均利益率</h2>
+                <canvas id="bar"></canvas>
+            </div>
+
+            <div class="card">
+                <h2>販売比率（サイト別分類）</h2>
+                <div style="display: flex; flex-wrap: wrap; justify-content: space-around; gap: 10px;">
+                    {% for site, pdata in sell_pies.items() %}
+                    <div style="width: 150px; text-align: center;">
+                        <small>{{ site }}</small>
+                        <canvas id="sell_{{ loop.index }}"></canvas>
+                    </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
             </div>
         </div>
     </div>
 </div>
 
 <script>
+// 商品名の展開/折りたたみ機能
+function toggleProductName(element) {
+    element.classList.toggle('expanded');
+}
+
 function showEdit(item) {
     document.getElementById('editWrapper').style.display = 'block';
     document.getElementById('edit_id').value = item.id;
@@ -246,7 +284,7 @@ function showEdit(item) {
     document.getElementById('edit_buy_platform').value = item.buy_platform;
     document.getElementById('edit_category').value = item.category;
     document.getElementById('edit_sell_site').value = item.sell_site || "";
-    window.scrollTo({top: document.getElementById('editWrapper').offsetTop - 20, behavior: 'smooth'});
+    window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
 function hideEdit() {
