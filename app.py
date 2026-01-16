@@ -1,8 +1,8 @@
-from flask import flask, render_template_string, request, redirect, jsonify
+from flask import Flask, render_template_string, request, redirect, jsonify
 import uuid
 import json
 
-app = flask(__name__)
+app = Flask(__name__)
 
 # データを永続化するためのファイル
 DATA_FILE = 'data.json'
