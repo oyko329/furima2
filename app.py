@@ -137,7 +137,7 @@ HTML = """
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>フリマ損益管理</title>
 
 <!-- iPhoneホーム画面アイコン対応 -->
@@ -151,486 +151,664 @@ HTML = """
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-/* 既存のベーススタイルを維持 */
-* { box-sizing: border-box; }
+/* iOS最適化スタイル */
+* { 
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
 body { 
     font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif; 
-    background: #fff0f6; 
+    background: linear-gradient(135deg, #fff0f6 0%, #ffe5f1 100%);
     margin: 0; 
-    padding: 16px; 
-    line-height: 1.4; 
+    padding: 0;
+    padding-bottom: 80px; /* フローティングボタン用 */
+    line-height: 1.5;
+    overflow-x: hidden;
 }
 
-/* メインレイアウト：左側フォーム、右側データ */
-.main-layout { 
-    display: flex; 
-    gap: 20px; 
-    max-width: 1800px; 
-    margin: 0 auto; 
-}
-
-/* 左側エリア（縦配置の登録・編集UI） */
-.left-sidebar { 
-    width: 380px; 
-    flex-shrink: 0; 
-}
-
-/* 右側エリア（商品データとグラフ） */
-.right-content { 
-    flex: 1; 
-    min-width: 0; 
-}
-
-form, .card, .table-wrapper { 
-    background: white; 
-    border-radius: 24px; 
-    box-shadow: 0 12px 32px rgba(255,105,180,0.15); 
-    padding: 20px; 
-    margin-bottom: 20px; 
-}
-
-h2 { 
-    margin-top: 0; 
-    color: #d63384; 
-    font-size: 18px; 
-    text-align: center; 
-    margin-bottom: 16px;
-}
-
-/* フォーム要素の縦並びを強化 */
-select, input, button { 
-    width: 100%; 
-    border-radius: 16px; 
-    padding: 12px; 
-    border: 1px solid #f3c1d9; 
-    margin-bottom: 12px; 
-    font-size: 16px; 
-    display: block; 
-}
-
-button { 
-    background: #ff6fae; 
-    color: white; 
-    border: none; 
-    cursor: pointer; 
-    font-weight: bold; 
-    transition: background 0.3s ease;
-}
-
-button:hover {
-    background: #ff4d94;
-}
-
-button:active {
-    transform: scale(0.98);
-}
-
-/* 横長テーブルのレスポンシブ対応 */
-.table-wrapper { 
-    overflow-x: auto; 
-}
-
-table { 
-    width: 100%; 
-    border-collapse: collapse; 
-    font-size: 13px; 
-    min-width: 900px; 
-}
-
-th, td { 
-    border-bottom: 1px solid #f8d7e8; 
-    padding: 12px 8px; 
-    text-align: center; 
-    vertical-align: middle; 
-}
-
-th { 
-    background: #fff5f9; 
-    color: #c2255c; 
-    font-weight: bold; 
-    position: sticky; 
-    top: 0; 
-    z-index: 10; 
-}
-
-/* 商品名の省略表示と展開機能 */
-.product-name-cell {
-    max-width: 180px;
-    position: relative;
-}
-
-.product-name { 
-    max-width: 180px; 
-    white-space: nowrap; 
-    overflow: hidden; 
-    text-overflow: ellipsis; 
-    cursor: pointer;
-    font-weight: bold;
-    transition: all 0.3s ease;
-    display: block;
-    padding: 8px;
-    border-radius: 8px;
-    position: relative;
-}
-
-.product-name:hover {
-    background: #fff0f6;
-    color: #ff6fae;
-}
-
-.product-name.expanded {
-    white-space: normal;
-    word-wrap: break-word;
-    overflow: visible;
-    max-width: 300px;
-    background: #fff0f6;
-    box-shadow: 0 4px 12px rgba(255,105,180,0.2);
-    z-index: 100;
-    position: absolute;
-    left: 0;
+/* コンテナ - モバイル専用縦配置 */
+.mobile-container {
+    max-width: 100%;
     padding: 12px;
 }
 
-.summary { 
-    font-size: 24px; 
-    text-align: right; 
-    color: #d63384; 
-    margin-top: 10px; 
-    font-weight: bold; 
-    padding: 16px;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(255,105,180,0.1);
+/* ヘッダー */
+.header {
+    background: linear-gradient(135deg, #ff6fae 0%, #ff4d94 100%);
+    color: white;
+    padding: 20px 16px;
+    border-radius: 0 0 24px 24px;
+    box-shadow: 0 4px 20px rgba(255, 105, 180, 0.3);
+    margin: -12px -12px 16px -12px;
+    text-align: center;
 }
 
-.delete { 
-    cursor: pointer; 
-    font-size: 20px; 
-    color: #dc3545; 
-    text-decoration: none; 
-    transition: transform 0.2s;
+.header h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
 }
 
-.delete:hover {
-    transform: scale(1.2);
-}
-
-.edit { 
-    cursor: pointer; 
-    font-size: 18px; 
-    color: #007bff; 
-    margin-right: 8px; 
-    transition: transform 0.2s;
-}
-
-.edit:hover {
-    transform: scale(1.2);
-}
-
-/* グラフエリアの横並び */
-.dashboard-grid { 
-    display: flex; 
-    flex-wrap: wrap; 
-    gap: 20px; 
-}
-
-.dashboard-grid .card { 
-    flex: 1; 
-    min-width: 320px; 
-}
-
-canvas { 
-    width: 100% !important; 
-    max-height: 350px; 
-}
-
-.tag { 
-    padding: 4px 10px; 
-    border-radius: 12px; 
-    font-size: 11px; 
-    color: white; 
-    font-weight: bold; 
-    white-space: nowrap; 
-    display: inline-block;
-}
-
-.status-sold { 
-    background: #28a745; 
-}
-
-.status-unsold { 
-    background: #adb5bd; 
-}
-
-.profit-positive { 
-    color: #28a745; 
-    font-weight: bold; 
-}
-
-.profit-negative { 
-    color: #dc3545; 
-    font-weight: bold; 
-}
-
-.date-guide { 
-    font-size: 12px; 
-    color: #888; 
-    display: block; 
-    margin-bottom: 6px; 
-    padding-left: 4px; 
-    font-weight: 500;
-}
-
-/* 編集フォームのコンテナ（縦長） */
-.edit-form-wrapper { 
-    display: none; 
-    background: #fff9fc; 
-    border: 3px solid #ff6fae; 
-    border-radius: 24px; 
-    padding: 20px; 
-    margin-bottom: 20px; 
-    animation: slideDown 0.3s ease;
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.header .subtitle {
+    font-size: 13px;
+    opacity: 0.9;
+    margin-top: 4px;
 }
 
 /* データベース接続表示 */
 .db-status {
-    background: #e7f5ff;
-    border: 2px solid #339af0;
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 12px;
-    padding: 8px 12px;
-    margin-bottom: 12px;
-    text-align: center;
+    padding: 6px 12px;
+    margin-top: 12px;
     font-size: 11px;
-    color: #1971c2;
+    display: inline-block;
+}
+
+/* カード */
+.card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(255, 105, 180, 0.1);
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.card-title {
+    color: #d63384;
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0 0 12px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* フォーム要素 - タッチ最適化 */
+select, input[type="text"], input[type="number"], input[type="date"] {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #f3c1d9;
+    border-radius: 12px;
+    font-size: 16px; /* iOSズーム防止 */
+    margin-bottom: 12px;
+    background: white;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+input[type="date"] {
+    background: white;
+}
+
+select {
+    background: white url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8"><path fill="%23d63384" d="M0 0l6 8 6-8z"/></svg>') no-repeat right 16px center;
+    padding-right: 40px;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #ff6fae;
+    box-shadow: 0 0 0 3px rgba(255, 111, 174, 0.1);
+}
+
+.date-guide {
+    font-size: 13px;
+    color: #888;
+    display: block;
+    margin-bottom: 6px;
+    padding-left: 4px;
+    font-weight: 500;
+}
+
+/* ボタン - 大きくタッチしやすく */
+.btn {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 16px;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #ff6fae 0%, #ff4d94 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(255, 105, 180, 0.3);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+    margin-top: 8px;
+}
+
+.btn-cancel {
+    background: #f8f9fa;
+    color: #6c757d;
+    border: 2px solid #dee2e6;
+}
+
+/* 商品リスト - カード形式 */
+.item-card {
+    background: white;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f8d7e8;
+}
+
+.item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 12px;
+}
+
+.item-name {
+    font-weight: bold;
+    font-size: 16px;
+    color: #2c3e50;
+    flex: 1;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.item-name:active {
+    background: #fff0f6;
+}
+
+.item-name.truncate {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.item-name.expanded {
+    display: block;
+    background: #fff0f6;
+    padding: 8px;
+}
+
+.item-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.icon-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    background: #f8f9fa;
+}
+
+.icon-btn:active {
+    transform: scale(0.9);
+}
+
+.icon-btn.edit {
+    background: #e7f5ff;
+    color: #1c7ed6;
+}
+
+.icon-btn.delete {
+    background: #ffe3e3;
+    color: #f03e3e;
+}
+
+/* タグ */
+.tag {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: bold;
+    color: white;
+    margin: 2px;
+}
+
+.item-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+/* 商品情報グリッド */
+.item-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    font-size: 13px;
+    padding-top: 8px;
+    border-top: 1px solid #f1f3f5;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-label {
+    color: #868e96;
+    font-size: 11px;
+    margin-bottom: 2px;
+}
+
+.info-value {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.profit-positive {
+    color: #28a745;
     font-weight: bold;
 }
 
-/* レスポンシブ対応：小さい画面では縦並び */
-@media (max-width: 1024px) {
-    .main-layout { 
-        flex-direction: column; 
+.profit-negative {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* サマリー */
+.summary-card {
+    background: linear-gradient(135deg, #ff6fae 0%, #ff4d94 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 8px 24px rgba(255, 105, 180, 0.3);
+    margin-bottom: 16px;
+}
+
+.summary-label {
+    font-size: 14px;
+    opacity: 0.9;
+    margin-bottom: 4px;
+}
+
+.summary-value {
+    font-size: 32px;
+    font-weight: bold;
+}
+
+/* グラフコンテナ */
+.chart-container {
+    height: 250px;
+    margin: 16px 0;
+}
+
+.mini-charts {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding: 8px 0;
+    -webkit-overflow-scrolling: touch;
+}
+
+.mini-chart {
+    flex-shrink: 0;
+    width: 140px;
+    text-align: center;
+}
+
+.mini-chart canvas {
+    height: 120px !important;
+}
+
+.mini-chart-label {
+    font-size: 12px;
+    font-weight: bold;
+    color: #d63384;
+    margin-top: 8px;
+}
+
+/* フローティング追加ボタン */
+.floating-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #ff6fae 0%, #ff4d94 100%);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 28px;
+    box-shadow: 0 6px 20px rgba(255, 105, 180, 0.4);
+    cursor: pointer;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.floating-btn:active {
+    transform: scale(0.9);
+}
+
+/* モーダル */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    padding: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.modal.active {
+    display: block;
+    animation: fadeIn 0.2s;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 24px 24px 0 0;
+    padding: 24px;
+    margin-top: 60px;
+    min-height: calc(100vh - 60px);
+    animation: slideUp 0.3s;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #d63384;
+}
+
+.close-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #f8f9fa;
+    border: none;
+    font-size: 24px;
+    color: #868e96;
+    cursor: pointer;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+/* 空の状態 */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #868e96;
+}
+
+.empty-state-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+}
+
+.empty-state-text {
+    font-size: 16px;
+    color: #adb5bd;
+}
+
+/* スクロールバー非表示 */
+.mini-charts::-webkit-scrollbar {
+    display: none;
+}
+
+/* Safe Area対応 */
+@supports (padding: max(0px)) {
+    body {
+        padding-bottom: max(80px, env(safe-area-inset-bottom));
     }
-    .left-sidebar { 
-        width: 100%; 
-        max-width: 500px; 
-        margin: 0 auto; 
+    
+    .floating-btn {
+        bottom: max(20px, calc(env(safe-area-inset-bottom) + 8px));
+        right: max(20px, calc(env(safe-area-inset-right) + 8px));
     }
-    .product-name {
-        max-width: 120px;
-    }
-}
-
-/* スクロールバーのカスタマイズ */
-.table-wrapper::-webkit-scrollbar {
-    height: 8px;
-}
-
-.table-wrapper::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
-}
-
-.table-wrapper::-webkit-scrollbar-thumb {
-    background: #ff6fae;
-    border-radius: 10px;
-}
-
-.table-wrapper::-webkit-scrollbar-thumb:hover {
-    background: #ff4d94;
 }
 </style>
 </head>
 <body>
 
-<div class="main-layout">
-    <!-- 左側: 商品登録・編集UI -->
-    <div class="left-sidebar">
+<div class="mobile-container">
+    <!-- ヘッダー -->
+    <div class="header">
+        <h1>💰 フリマ損益管理</h1>
+        <div class="subtitle">商品を管理して利益を最大化</div>
         {% if use_db %}
-        <div class="db-status">
-            🗄️ PostgreSQL接続中（データ永続化済み）
-        </div>
+        <div class="db-status">🗄️ データ永続化済み</div>
         {% endif %}
-        
-        <div class="card">
-            <h2>📝 商品登録</h2>
-            <form method="post" action="/add">
-                <select name="buy_platform" required>
-                    <option value="">購入先を選択</option>
-                    <option>お店</option><option>SHEIN</option><option>TEMU</option><option>アリエク</option><option>百均</option>
-                </select>
-                <select name="category" required>
-                    <option value="">分類を選択</option>
-                    <option>ガチャ</option><option>ステッカー</option><option>服</option><option>文房具</option><option>雑貨</option>
-                </select>
-                <input name="name" placeholder="商品名" required>
-                
-                <span class="date-guide">📅 購入日を選択してください</span>
-                <input type="date" name="buy_date" required>
-                
-                <span class="date-guide">📅 販売日を選択してください（任意）</span>
-                <input type="date" name="sell_date">
-                
-                <input name="buy_price" type="number" placeholder="仕入価格（円）" required>
-                <input name="sell_price" type="number" placeholder="販売価格（円）">
-                <input name="shipping" type="number" placeholder="送料（円）">
-                <select name="sell_site">
-                    <option value="">販売状況（未選択なら未売却）</option>
-                    <option>ラクマ</option><option>ヤフーフリマ</option><option>メルカリ</option>
-                </select>
-                <button type="submit">💾 保存する</button>
-            </form>
-        </div>
+    </div>
 
-        <div id="editWrapper" class="edit-form-wrapper">
-            <h2>✏️ 商品情報編集</h2>
-            <form method="post" action="/edit">
-                <input type="hidden" id="edit_id" name="id">
-                
-                <span class="date-guide">商品名（直接入力）</span>
-                <input type="text" id="edit_name" name="name" required>
-                
-                <span class="date-guide">仕入れ価格（直接入力）</span>
-                <input type="number" id="edit_buy_price" name="buy_price" required>
+    <!-- サマリー -->
+    <div class="summary-card">
+        <div class="summary-label">総利益</div>
+        <div class="summary-value">¥{{ "{:,.0f}".format(total_profit) }}</div>
+    </div>
 
-                <span class="date-guide">販売価格（直接入力）</span>
-                <input type="number" id="edit_sell_price" name="sell_price">
-
-                <span class="date-guide">買ったところ（分野から選択）</span>
-                <select id="edit_buy_platform" name="buy_platform" required>
-                    <option>お店</option><option>SHEIN</option><option>TEMU</option><option>アリエク</option><option>百均</option>
-                </select>
-
-                <span class="date-guide">商品の分類（タグから選択）</span>
-                <select id="edit_category" name="category" required>
-                    <option>ガチャ</option><option>ステッカー</option><option>服</option><option>文房具</option><option>雑貨</option>
-                </select>
-
-                <span class="date-guide">販売状況（プラットフォームから選択）</span>
-                <select id="edit_sell_site" name="sell_site">
-                    <option value="">未売却</option>
-                    <option>ラクマ</option><option>ヤフーフリマ</option><option>メルカリ</option>
-                </select>
-
-                <button type="submit">✅ 更新を保存</button>
-                <button type="button" onclick="hideEdit()" style="background:#6c757d;">❌ キャンセル</button>
-            </form>
+    <!-- グラフ -->
+    <div class="card">
+        <div class="card-title">📊 購入元別 平均利益率</div>
+        <div class="chart-container">
+            <canvas id="bar"></canvas>
         </div>
     </div>
 
-    <!-- 右側: 商品データとグラフ -->
-    <div class="right-content">
-        <h2>📦 商品一覧</h2>
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>購入元</th><th>分類</th><th>商品名</th><th>状態</th>
-                        <th>購入日</th><th>販売日</th><th>仕入</th><th>販売</th>
-                        <th>送料</th><th>手数料</th><th>利益</th><th>利益率</th><th>操作</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for d in data %}
-                    <tr>
-                        <td><span class="tag" style="background: {{ platform_colors.get(d.buy_platform, '#6c757d') }}">{{ d.buy_platform }}</span></td>
-                        <td><span class="tag" style="background: {{ category_colors.get(d.category, '#28a745') }}">{{ d.category }}</span></td>
-                        <td class="product-name-cell">
-                            <span class="product-name" onclick="toggleProductName(this)" title="{{ d.name }}">{{ d.name }}</span>
-                        </td>
-                        <td>
-                            {% if d.sell_site %}
-                            <span class="tag status-sold">{{ d.sell_site }}</span>
-                            {% else %}
-                            <span class="tag status-unsold">未売</span>
-                            {% endif %}
-                        </td>
-                        <td>{{ d.buy_date or '-' }}</td>
-                        <td>{{ d.sell_date or '-' }}</td>
-                        <td>¥{{ "{:,.0f}".format(d.buy_price) }}</td>
-                        <td>{{ "¥{:,.0f}".format(d.sell_price) if d.sell_price else '-' }}</td>
-                        <td>{{ "¥{:,.0f}".format(d.shipping) if d.shipping else '-' }}</td>
-                        <td>{{ "¥{:,.0f}".format(d.fee) if d.sell_site else '-' }}</td>
-                        <td class="{{ 'profit-positive' if d.profit >= 0 else 'profit-negative' }}">
-                            {{ "¥{:,.0f}".format(d.profit) if d.sell_site else '-' }}
-                        </td>
-                        <td class="{{ 'profit-positive' if d.profit >= 0 else 'profit-negative' }}">
-                            {{ d.rate ~ '%' if d.sell_site else '-' }}
-                        </td>
-                        <td>
-                            <span class="edit" onclick='showEdit({{ d|tojson }})' title="編集">✏️</span>
-                            <a href="/delete/{{ d.id }}" class="delete" onclick="return confirm('本当に削除しますか？')" title="削除">🗑</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        
-        <div class="summary">💰 総利益: ¥{{ "{:,.0f}".format(total_profit) }}</div>
-
-        <div class="dashboard-grid">
-            <div class="card">
-                <h2>📊 購入元別 平均利益率</h2>
-                <canvas id="bar"></canvas>
+    <div class="card">
+        <div class="card-title">🥧 販売サイト別分類</div>
+        <div class="mini-charts">
+            {% for site, pdata in sell_pies.items() %}
+            <div class="mini-chart">
+                <canvas id="sell_{{ loop.index }}"></canvas>
+                <div class="mini-chart-label">{{ site }}</div>
             </div>
+            {% endfor %}
+        </div>
+    </div>
 
-            <div class="card">
-                <h2>🥧 販売比率（サイト別分類）</h2>
-                <div style="display: flex; flex-wrap: wrap; justify-content: space-around; gap: 10px;">
-                    {% for site, pdata in sell_pies.items() %}
-                    <div style="width: 150px; text-align: center;">
-                        <small style="font-weight: bold; color: #d63384;">{{ site }}</small>
-                        <canvas id="sell_{{ loop.index }}"></canvas>
-                    </div>
-                    {% endfor %}
+    <!-- 商品一覧 -->
+    <div class="card">
+        <div class="card-title">📦 商品一覧（{{ data|length }}件）</div>
+        
+        {% if data|length == 0 %}
+        <div class="empty-state">
+            <div class="empty-state-icon">📦</div>
+            <div class="empty-state-text">まだ商品が登録されていません<br>右下のボタンから追加してください</div>
+        </div>
+        {% else %}
+        {% for d in data %}
+        <div class="item-card">
+            <div class="item-header">
+                <div class="item-name truncate" onclick="toggleName(this)">
+                    {{ d.name }}
+                </div>
+                <div class="item-actions">
+                    <button class="icon-btn edit" onclick='showEditModal({{ d|tojson }})'>✏️</button>
+                    <a href="/delete/{{ d.id }}" class="icon-btn delete" onclick="return confirm('本当に削除しますか？')">🗑</a>
+                </div>
+            </div>
+            
+            <div class="item-tags">
+                <span class="tag" style="background: {{ platform_colors.get(d.buy_platform, '#6c757d') }}">{{ d.buy_platform }}</span>
+                <span class="tag" style="background: {{ category_colors.get(d.category, '#28a745') }}">{{ d.category }}</span>
+                {% if d.sell_site %}
+                <span class="tag" style="background: #28a745">{{ d.sell_site }}</span>
+                {% else %}
+                <span class="tag" style="background: #adb5bd">未売</span>
+                {% endif %}
+            </div>
+            
+            <div class="item-info">
+                <div class="info-item">
+                    <span class="info-label">仕入価格</span>
+                    <span class="info-value">¥{{ "{:,.0f}".format(d.buy_price) }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">販売価格</span>
+                    <span class="info-value">{{ "¥{:,.0f}".format(d.sell_price) if d.sell_price else '-' }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">利益</span>
+                    <span class="info-value {{ 'profit-positive' if d.profit >= 0 else 'profit-negative' }}">
+                        {{ "¥{:,.0f}".format(d.profit) if d.sell_site else '-' }}
+                    </span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">利益率</span>
+                    <span class="info-value {{ 'profit-positive' if d.profit >= 0 else 'profit-negative' }}">
+                        {{ d.rate ~ '%' if d.sell_site else '-' }}
+                    </span>
                 </div>
             </div>
         </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+<!-- フローティング追加ボタン -->
+<button class="floating-btn" onclick="showAddModal()">+</button>
+
+<!-- 追加モーダル -->
+<div id="addModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title">📝 商品を追加</div>
+            <button class="close-btn" onclick="closeAddModal()">×</button>
+        </div>
+        
+        <form method="post" action="/add">
+            <select name="buy_platform" required>
+                <option value="">購入先を選択</option>
+                <option>お店</option><option>SHEIN</option><option>TEMU</option><option>アリエク</option><option>百均</option>
+            </select>
+            
+            <select name="category" required>
+                <option value="">分類を選択</option>
+                <option>ガチャ</option><option>ステッカー</option><option>服</option><option>文房具</option><option>雑貨</option>
+            </select>
+            
+            <input name="name" type="text" placeholder="商品名" required>
+            
+            <span class="date-guide">📅 購入日</span>
+            <input type="date" name="buy_date" required>
+            
+            <span class="date-guide">📅 販売日（任意）</span>
+            <input type="date" name="sell_date">
+            
+            <input name="buy_price" type="number" placeholder="仕入価格（円）" required>
+            <input name="sell_price" type="number" placeholder="販売価格（円）">
+            <input name="shipping" type="number" placeholder="送料（円）">
+            
+            <select name="sell_site">
+                <option value="">販売状況（未選択なら未売却）</option>
+                <option>ラクマ</option><option>ヤフーフリマ</option><option>メルカリ</option>
+            </select>
+            
+            <button type="submit" class="btn btn-primary">💾 保存する</button>
+            <button type="button" class="btn btn-cancel" onclick="closeAddModal()">キャンセル</button>
+        </form>
+    </div>
+</div>
+
+<!-- 編集モーダル -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title">✏️ 商品を編集</div>
+            <button class="close-btn" onclick="closeEditModal()">×</button>
+        </div>
+        
+        <form method="post" action="/edit">
+            <input type="hidden" id="edit_id" name="id">
+            
+            <span class="date-guide">商品名</span>
+            <input type="text" id="edit_name" name="name" required>
+            
+            <span class="date-guide">仕入れ価格</span>
+            <input type="number" id="edit_buy_price" name="buy_price" required>
+            
+            <span class="date-guide">販売価格</span>
+            <input type="number" id="edit_sell_price" name="sell_price">
+            
+            <span class="date-guide">購入先</span>
+            <select id="edit_buy_platform" name="buy_platform" required>
+                <option>お店</option><option>SHEIN</option><option>TEMU</option><option>アリエク</option><option>百均</option>
+            </select>
+            
+            <span class="date-guide">商品分類</span>
+            <select id="edit_category" name="category" required>
+                <option>ガチャ</option><option>ステッカー</option><option>服</option><option>文房具</option><option>雑貨</option>
+            </select>
+            
+            <span class="date-guide">販売状況</span>
+            <select id="edit_sell_site" name="sell_site">
+                <option value="">未売却</option>
+                <option>ラクマ</option><option>ヤフーフリマ</option><option>メルカリ</option>
+            </select>
+            
+            <button type="submit" class="btn btn-primary">✅ 更新を保存</button>
+            <button type="button" class="btn btn-cancel" onclick="closeEditModal()">キャンセル</button>
+        </form>
     </div>
 </div>
 
 <script>
-// 商品名の展開/折りたたみ機能（改善版）
-let currentExpandedElement = null;
-
-function toggleProductName(element) {
-    // 既に展開されている要素がある場合は閉じる
-    if (currentExpandedElement && currentExpandedElement !== element) {
-        currentExpandedElement.classList.remove('expanded');
-    }
-    
-    // 現在の要素をトグル
-    element.classList.toggle('expanded');
-    
-    // 展開状態を記録
-    if (element.classList.contains('expanded')) {
-        currentExpandedElement = element;
-    } else {
-        currentExpandedElement = null;
-    }
+// モーダル制御
+function showAddModal() {
+    document.getElementById('addModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
 }
 
-// ドキュメント全体のクリックで展開を閉じる
-document.addEventListener('click', function(event) {
-    if (currentExpandedElement && !event.target.classList.contains('product-name')) {
-        currentExpandedElement.classList.remove('expanded');
-        currentExpandedElement = null;
-    }
-});
+function closeAddModal() {
+    document.getElementById('addModal').classList.remove('active');
+    document.body.style.overflow = '';
+}
 
-function showEdit(item) {
-    document.getElementById('editWrapper').style.display = 'block';
+function showEditModal(item) {
     document.getElementById('edit_id').value = item.id;
     document.getElementById('edit_name').value = item.name;
     document.getElementById('edit_buy_price').value = item.buy_price;
@@ -639,13 +817,30 @@ function showEdit(item) {
     document.getElementById('edit_category').value = item.category;
     document.getElementById('edit_sell_site').value = item.sell_site || "";
     
-    // スムーズスクロール
-    document.getElementById('editWrapper').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('editModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
 }
 
-function hideEdit() {
-    document.getElementById('editWrapper').style.display = 'none';
+function closeEditModal() {
+    document.getElementById('editModal').classList.remove('active');
+    document.body.style.overflow = '';
 }
+
+// 商品名の展開/折りたたみ
+function toggleName(element) {
+    element.classList.toggle('truncate');
+    element.classList.toggle('expanded');
+}
+
+// モーダル背景クリックで閉じる
+document.querySelectorAll('.modal').forEach(modal => {
+    modal.addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
+});
 
 // グラフ描画
 new Chart(document.getElementById("bar"), {
@@ -657,7 +852,8 @@ new Chart(document.getElementById("bar"), {
             data: {{ rates|safe }},
             backgroundColor: "#ff6fae",
             borderColor: "#ff4d94",
-            borderWidth: 2
+            borderWidth: 2,
+            borderRadius: 8
         }]
     },
     options: {
@@ -666,19 +862,17 @@ new Chart(document.getElementById("bar"), {
         scales: { 
             y: { 
                 beginAtZero: true, 
-                ticks: { callback: v => v + '%' } 
-            } 
+                ticks: { 
+                    callback: v => v + '%',
+                    font: { size: 11 }
+                } 
+            },
+            x: {
+                ticks: { font: { size: 11 } }
+            }
         },
         plugins: {
-            legend: {
-                display: true,
-                labels: {
-                    font: {
-                        size: 14,
-                        weight: 'bold'
-                    }
-                }
-            }
+            legend: { display: false }
         }
     }
 });
@@ -690,23 +884,23 @@ new Chart(document.getElementById("sell_{{ loop.index }}"), {
         labels: {{ pdata.labels|safe }},
         datasets: [{
             data: {{ pdata.ratios|safe }},
-            backgroundColor: ["#ff6fae", "#ffb3d9", "#ffc0cb", "#f783ac", "#ff85a1"]
+            backgroundColor: ["#ff6fae", "#ffb3d9", "#ffc0cb", "#f783ac", "#ff85a1"],
+            borderWidth: 0
         }]
     },
     options: { 
-        responsive: true, 
-        maintainAspectRatio: false, 
+        responsive: true,
+        maintainAspectRatio: false,
         plugins: { 
             legend: { 
                 display: true,
                 position: 'bottom',
-                labels: {
-                    font: {
-                        size: 10
-                    }
+                labels: { 
+                    font: { size: 9 },
+                    boxWidth: 12
                 }
-            } 
-        } 
+            }
+        }
     }
 });
 {% endfor %}
