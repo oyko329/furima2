@@ -602,7 +602,7 @@ td:last-child {
 <div class="mobile-container">
     <!-- ヘッダー -->
     <div class="header">
-        <h1>💰 フリマ損益計算</h1>
+        <h1>うんち💩</h1>
         <div class="subtitle">かしこく売って、賢く稼ぐ</div>
         {% if use_db %}
         <div class="db-status">🔗 PostgreSQL接続済み（データは永続保存されます）<br>登録件数: {{ data_count }}件 | <a href="/backup" style="color: white; text-decoration: underline;">バックアップ</a></div>
