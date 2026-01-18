@@ -631,7 +631,7 @@ td:last-child {
         <div class="stat-box expected-profit">
             <div class="stat-label">見込み利益</div>
             <div class="stat-value">¥{{ "{:,}".format(expected_profit|int) }}</div>
-            <div class="stat-sublabel">送料抜き・全商品売却時</div>
+            <div class="stat-sublabel">手数料7.5%・送料300円で概算</div>
         </div>
     </div>
 
@@ -894,7 +894,7 @@ function showAISuggestion(item) {
                     <strong style="font-size: 20px; color: #6d28d9;">¥${data.suggested_price.toLocaleString()}</strong><br>
                     <div style="margin-top: 8px;">
                         予想利益: <strong style="color: ${data.expected_profit > 0 ? '#28a745' : '#dc3545'};">¥${data.expected_profit.toLocaleString()}</strong> (${data.expected_rate}%)<br>
-                        <span style="font-size: 11px; color: #888;">※平均手数料8%で概算</span>
+                        <span style="font-size: 11px; color: #888;">※手数料7.5%・送料300円で概算</span>
                     </div>
                 </div>
             </div>
@@ -1017,13 +1017,13 @@ def index():
     
     total_profit = sum(d.get("profit", 0) for d in sold_items)
     
-    # 見込み利益の計算（手数料7.5%、送料300円の固定値で計算）
+    # 見込み利益の計算（手数料7.5%、送料300円で計算）
     expected_profit = 0
     for item in unsold_items:
         sell_price = item.get("sell_price", 0)
         if sell_price > 0:  # 販売価格が入力されている場合のみ計算
             estimated_fee = sell_price * 0.075  # 手数料7.5%
-            estimated_shipping = 300  # 送料300円
+            estimated_shipping = 300  # 暫定送料300円
             expected_profit += sell_price - item.get("buy_price", 0) - estimated_fee - estimated_shipping
     
     platforms = list(set(d.get("buy_platform") for d in DATA if d.get("buy_platform")))
