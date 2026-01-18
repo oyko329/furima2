@@ -252,196 +252,57 @@ select, input[type="text"], input[type="number"], input[type="date"] {
     font-size: 16px; /* iOSズーム防止 */
     margin-bottom: 12px;
     background: white;
-    -webkit-appearance: none;
-    appearance: none;
+    transition: border-color 0.2s;
 }
 
-input[type="date"] {
-    background: white;
-}
-
-select {
-    background: white url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8"><path fill="%23d63384" d="M0 0l6 8 6-8z"/></svg>') no-repeat right 16px center;
-    padding-right: 40px;
-}
-
-input:focus, select:focus {
+select:focus, input:focus {
     outline: none;
     border-color: #ff6fae;
-    box-shadow: 0 0 0 3px rgba(255, 111, 174, 0.1);
 }
 
-/* 統計表示 */
-.stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 16px;
-}
-
-.stat-box {
-    background: white;
-    border-radius: 16px;
-    padding: 16px;
-    text-align: center;
-    box-shadow: 0 4px 20px rgba(255, 105, 180, 0.1);
-}
-
-.stat-value {
-    font-size: 28px;
-    font-weight: bold;
-    color: #ff4d94;
-    margin: 8px 0 4px 0;
-}
-
-.stat-label {
-    font-size: 12px;
-    color: #888;
-}
-
-.stat-sublabel {
-    font-size: 10px;
-    color: #aaa;
-    margin-top: 2px;
-}
-
-/* 見込み利益表示 */
-.expected-profit {
-    background: linear-gradient(135deg, #fff9e6 0%, #ffe5b4 100%);
-    border: 2px dashed #ffb347;
-}
-
-.expected-profit .stat-value {
-    color: #ff8c00;
-}
-
-/* テーブル */
-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0 8px;
-}
-
-td {
-    padding: 12px 8px;
-    font-size: 13px;
-    background: white;
-}
-
-td:first-child {
-    border-radius: 12px 0 0 12px;
-    padding-left: 12px;
-}
-
-td:last-child {
-    border-radius: 0 12px 12px 0;
-    padding-right: 12px;
-}
-
-/* バッジ */
-.badge {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: bold;
+/* ボタン */
+button, .btn {
+    background: linear-gradient(135deg, #ff6fae 0%, #ff4d94 100%);
     color: white;
-    white-space: nowrap;
-}
-
-.date-badge {
-    background: #95a5a6;
-    font-size: 10px;
-    padding: 3px 8px;
-    margin-left: 4px;
-}
-
-/* 商品名 */
-.item-name {
-    font-weight: bold;
-    color: #333;
-    cursor: pointer;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    margin-bottom: 4px;
-}
-
-.item-name.expanded {
-    -webkit-line-clamp: unset;
-}
-
-.item-name.truncate {
-    -webkit-line-clamp: 2;
-}
-
-/* アクションボタン */
-.action-btns {
-    display: flex;
-    gap: 8px;
-    margin-top: 8px;
-}
-
-.btn-edit, .btn-delete, .btn-ai {
-    padding: 8px 12px;
     border: none;
-    border-radius: 8px;
-    font-size: 12px;
+    padding: 14px 24px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    width: 100%;
+    margin-top: 8px;
     cursor: pointer;
-    transition: all 0.2s;
-    flex: 1;
-    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
+    transition: transform 0.1s, box-shadow 0.2s;
 }
 
-.btn-edit {
-    background: #4a90e2;
-    color: white;
+button:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(255, 105, 180, 0.3);
 }
 
-.btn-edit:active {
-    background: #357abd;
-    transform: scale(0.95);
-}
-
-.btn-delete {
-    background: #e74c3c;
-    color: white;
-}
-
-.btn-delete:active {
-    background: #c0392b;
-    transform: scale(0.95);
-}
-
-.btn-ai {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-}
-
-.btn-ai:active {
-    transform: scale(0.95);
-}
-
-/* フローティングボタン */
-.floating-add {
+/* フローティングアクションボタン */
+.fab {
     position: fixed;
     bottom: 20px;
     right: 20px;
     width: 60px;
     height: 60px;
+    border-radius: 50%;
     background: linear-gradient(135deg, #ff6fae 0%, #ff4d94 100%);
     color: white;
     border: none;
-    border-radius: 50%;
-    font-size: 32px;
+    font-size: 28px;
     box-shadow: 0 4px 20px rgba(255, 105, 180, 0.4);
     cursor: pointer;
-    z-index: 999;
-    transition: all 0.2s;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
 }
 
-.floating-add:active {
+.fab:active {
     transform: scale(0.9);
 }
 
@@ -451,36 +312,39 @@ td:last-child {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    right: 0;
+    bottom: 0;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+    z-index: 2000;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 }
 
-.modal.active {
-    display: flex;
-    align-items: flex-start;
-    padding: 20px;
-}
-
 .modal-content {
     background: white;
-    border-radius: 24px;
-    width: 100%;
+    margin: 20px auto;
     max-width: 500px;
-    margin: auto;
-    padding: 24px;
-    position: relative;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    border-radius: 20px;
+    padding: 20px;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
 
 .modal-title {
@@ -489,453 +353,570 @@ td:last-child {
     color: #d63384;
 }
 
-.close-btn {
-    background: #f8f9fa;
-    border: none;
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    font-size: 24px;
-    color: #666;
+.close {
+    font-size: 28px;
+    color: #999;
     cursor: pointer;
-    transition: all 0.2s;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
 }
 
-.close-btn:active {
-    background: #e9ecef;
-    transform: scale(0.9);
+.close:active {
+    background: #f0f0f0;
 }
 
-/* ボタン */
-.btn {
-    width: 100%;
-    padding: 16px;
-    border: none;
-    border-radius: 12px;
+/* 商品リスト */
+.item-row {
+    background: white;
+    border-radius: 16px;
+    padding: 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 12px rgba(255, 105, 180, 0.08);
+    border-left: 4px solid;
+    transition: transform 0.1s;
+}
+
+.item-row:active {
+    transform: scale(0.98);
+}
+
+.item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.item-name {
+    font-weight: bold;
+    font-size: 15px;
+    color: #333;
+    flex: 1;
+}
+
+.item-profit {
     font-size: 16px;
     font-weight: bold;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 8px;
+    margin-left: 8px;
 }
 
-.btn-primary {
-    background: linear-gradient(135deg, #ff6fae 0%, #ff4d94 100%);
-    color: white;
-    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.3);
+.item-profit.positive {
+    color: #00b894;
 }
 
-.btn-primary:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 6px rgba(255, 105, 180, 0.3);
+.item-profit.negative {
+    color: #d63031;
 }
 
-.btn-cancel {
-    background: #f8f9fa;
+.item-profit.unsold {
+    color: #999;
+}
+
+.item-details {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    font-size: 12px;
     color: #666;
 }
 
-.btn-cancel:active {
-    background: #e9ecef;
-}
-
-/* グラフ */
-.chart-container {
-    position: relative;
-    height: 250px;
-    margin: 16px 0;
-}
-
-/* 日付ガイド */
-.date-guide {
-    display: block;
-    font-size: 13px;
-    color: #666;
-    margin-bottom: 6px;
-    font-weight: 500;
-}
-
-/* AI提案ボックス */
-.ai-suggestion {
-    background: linear-gradient(135deg, #e0e7ff 0%, #f0e7ff 100%);
-    border-radius: 12px;
-    padding: 12px;
-    margin: 12px 0;
-    border: 2px solid #a78bfa;
-}
-
-.ai-suggestion-title {
-    font-size: 13px;
+.item-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 8px;
+    font-size: 11px;
     font-weight: bold;
-    color: #6d28d9;
+    margin-right: 4px;
+}
+
+.badge-platform {
+    background: #f3c1d9;
+    color: #d63384;
+}
+
+.badge-category {
+    background: #e8f5e9;
+    color: #4caf50;
+}
+
+.badge-unsold {
+    background: #fff3cd;
+    color: #856404;
+}
+
+/* 統計カード */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #fff 0%, #fff0f6 100%);
+    border-radius: 16px;
+    padding: 16px;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(255, 105, 180, 0.08);
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #d63384;
+    margin: 8px 0;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #666;
+}
+
+/* AI提案カード */
+.ai-suggestion {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    border-radius: 16px;
+    padding: 16px;
+    margin-top: 12px;
+    border-left: 4px solid #4caf50;
+}
+
+.ai-title {
+    font-weight: bold;
+    color: #2e7d32;
     margin-bottom: 8px;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
 }
 
-.ai-suggestion-content {
-    font-size: 12px;
-    color: #4c1d95;
-    line-height: 1.5;
+.ai-price {
+    font-size: 28px;
+    font-weight: bold;
+    color: #2e7d32;
+    margin: 12px 0;
 }
 
-.ai-loading {
+.ai-details {
+    font-size: 13px;
+    color: #1b5e20;
+    line-height: 1.6;
+}
+
+/* チャートコンテナ */
+.chart-container {
+    position: relative;
+    height: 200px;
+    margin: 16px 0;
+}
+
+.chart-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.chart-mini {
+    height: 150px;
+}
+
+/* 削除ボタン */
+.delete-btn {
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    margin-top: 12px;
+}
+
+.delete-btn:active {
+    background: #ff5252;
+}
+
+/* ローディング表示 */
+.loading {
     text-align: center;
+    color: #999;
     padding: 20px;
-    color: #6d28d9;
 }
 
-/* レスポンシブ対応 */
+/* 未売却時の見込み利益表示 */
+.expected-profit-note {
+    background: #fff8e1;
+    border-left: 4px solid #ffc107;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 12px;
+    font-size: 13px;
+    color: #856404;
+}
+
+.expected-profit-note strong {
+    display: block;
+    margin-bottom: 4px;
+    color: #f57c00;
+}
+
+/* レスポンシブ調整 */
 @media (max-width: 360px) {
-    .stats {
-        grid-template-columns: 1fr;
+    .header h1 {
+        font-size: 20px;
     }
     
     .stat-value {
-        font-size: 24px;
+        font-size: 20px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
     }
 }
 </style>
 </head>
 <body>
+
 <div class="mobile-container">
     <!-- ヘッダー -->
     <div class="header">
-        <h1>💰 フリマ損益計算</h1>
-        <div class="subtitle">かしこく売って、賢く稼ぐ</div>
-        {% if use_db %}
-        <div class="db-status">🔗 PostgreSQL接続済み（データは永続保存されます）<br>登録件数: {{ data_count }}件 | <a href="/backup" style="color: white; text-decoration: underline;">バックアップ</a></div>
-        {% else %}
-        <div class="db-status">📁 ローカルファイル保存 | 登録件数: {{ data_count }}件</div>
-        {% endif %}
+        <h1>💖 フリマ損益計算 💖</h1>
+        <div class="subtitle">スマートに稼ぐ💰</div>
+        <div class="db-status">
+            {% if use_db %}
+            ✅ データベース接続 ({{ data_count }}件)
+            {% else %}
+            📁 ローカルファイル ({{ data_count }}件)
+            {% endif %}
+        </div>
     </div>
 
-    <!-- 統計情報 -->
-    <div class="stats">
-        <div class="stat-box">
-            <div class="stat-label">総利益（売却済み）</div>
+    <!-- 統計サマリー -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">確定利益</div>
             <div class="stat-value">¥{{ "{:,}".format(total_profit|int) }}</div>
         </div>
-        <div class="stat-box expected-profit">
+        <div class="stat-card">
             <div class="stat-label">見込み利益</div>
-            <div class="stat-value">¥{{ "{:,}".format(expected_profit|int) }}</div>
-            <div class="stat-sublabel">送料抜き・全商品売却時</div>
+            <div class="stat-value" style="color: #ffa726;">¥{{ "{:,}".format(expected_profit|int) }}</div>
         </div>
     </div>
 
-    <!-- グラフ: 購入先別の平均利益率 -->
+    <!-- グラフセクション -->
+    {% if platforms %}
     <div class="card">
-        <div class="card-title">📊 購入先別 平均利益率</div>
+        <div class="card-title">📊 購入先別利益率</div>
         <div class="chart-container">
-            <canvas id="bar"></canvas>
+            <canvas id="platformChart"></canvas>
         </div>
     </div>
+    {% endif %}
 
-    <!-- グラフ: 販売サイト別の商品分類 -->
-    {% for site, pdata in sell_pies.items() %}
+    {% if sell_pies %}
     <div class="card">
-        <div class="card-title">🛒 {{ site }} - 商品分類</div>
-        <div class="chart-container">
-            <canvas id="sell_{{ loop.index }}"></canvas>
+        <div class="card-title">🎯 売却サイト別カテゴリ分布</div>
+        <div class="chart-row">
+            {% for site in sell_pies.keys() %}
+            <div>
+                <div style="font-size: 12px; font-weight: bold; text-align: center; margin-bottom: 8px; color: #d63384;">{{ site }}</div>
+                <div class="chart-mini">
+                    <canvas id="sell_{{ loop.index }}"></canvas>
+                </div>
+            </div>
+            {% endfor %}
         </div>
     </div>
-    {% endfor %}
+    {% endif %}
 
     <!-- 商品リスト -->
     <div class="card">
-        <div class="card-title">📦 商品一覧（{{ data|length }}件）</div>
-        <table>
+        <div class="card-title">📦 商品一覧</div>
+        {% if data %}
             {% for d in data %}
-            <tr>
-                <td>
-                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                        <span class="badge" style="background: {{ platform_colors[d.buy_platform] }}">{{ d.buy_platform }}</span>
-                        <span class="badge" style="background: {{ category_colors[d.category] }}">{{ d.category }}</span>
-                        {% if d.buy_date %}
-                        <span class="date-badge">購入: {{ d.buy_date }}</span>
-                        {% endif %}
-                        {% if d.sell_date %}
-                        <span class="date-badge">売却: {{ d.sell_date }}</span>
-                        {% endif %}
-                    </div>
-                    <div class="item-name truncate" onclick="toggleName(this)">{{ d.name }}</div>
-                    <div style="font-size: 12px; color: #666; margin-top: 4px;">
-                        仕入: ¥{{ "{:,}".format(d.buy_price|int) }}
-                        {% if d.sell_site %}
-                        → 販売: ¥{{ "{:,}".format(d.sell_price|int) }} ({{ d.sell_site }})
-                        {% else %}
-                        → <span style="color: #ff8c00; font-weight: bold;">未売却</span>
-                        {% endif %}
-                    </div>
+            <div class="item-row" style="border-left-color: {{ category_colors.get(d.category, '#ccc') }}">
+                <div class="item-header">
+                    <div class="item-name">{{ d.name }}</div>
                     {% if d.sell_site %}
-                    <div style="font-size: 14px; font-weight: bold; margin-top: 4px; color: {{ '#28a745' if d.profit > 0 else '#dc3545' }};">
-                        利益: ¥{{ "{:,}".format(d.profit|int) }} ({{ d.rate }}%)
-                    </div>
+                        <div class="item-profit {% if d.profit > 0 %}positive{% else %}negative{% endif %}">
+                            ¥{{ "{:,}".format(d.profit|int) }}
+                        </div>
+                    {% else %}
+                        <div class="item-profit unsold">未売却</div>
                     {% endif %}
-                    <div class="action-btns">
-                        <button class="btn-edit" onclick='showEditModal({{ d|tojson }})'>✏️ 編集</button>
-                        <button class="btn-ai" onclick='showAISuggestion({{ d|tojson }})'>🤖 AI提案</button>
-                        <button class="btn-delete" onclick="if(confirm('本当に削除しますか？')) location.href='/delete/{{ d.id }}'">🗑️</button>
-                    </div>
-                </td>
-            </tr>
+                </div>
+                <div style="margin: 6px 0;">
+                    <span class="item-badge badge-platform" style="background: {{ platform_colors.get(d.buy_platform, '#f3c1d9') }}; color: white;">{{ d.buy_platform }}</span>
+                    <span class="item-badge badge-category">{{ d.category }}</span>
+                    {% if not d.sell_site %}
+                    <span class="item-badge badge-unsold">在庫中</span>
+                    {% endif %}
+                </div>
+                <div class="item-details">
+                    <div>📅 購入: {{ d.buy_date or '-' }}</div>
+                    <div>💰 購入: ¥{{ "{:,}".format(d.buy_price|int) }}</div>
+                    <div>📅 売却: {{ d.sell_date or '-' }}</div>
+                    <div>💵 売却: ¥{{ "{:,}".format(d.sell_price|int) if d.sell_price else '-' }}</div>
+                </div>
+                {% if d.sell_site %}
+                <div style="margin-top: 8px; font-size: 12px; color: #666;">
+                    <div>🏪 売却先: <strong>{{ d.sell_site }}</strong></div>
+                    <div>📦 送料: ¥{{ "{:,}".format(d.shipping|int) }} / 手数料: ¥{{ "{:,}".format(d.fee|int) }}</div>
+                    <div>📈 利益率: <strong style="color: {% if d.rate > 30 %}#00b894{% elif d.rate > 10 %}#fdcb6e{% else %}#ff6b6b{% endif %}">{{ d.rate }}%</strong></div>
+                </div>
+                {% else %}
+                <div class="expected-profit-note">
+                    <strong>💡 見込み利益の計算方法</strong>
+                    販売価格が入力されると、手数料7.5%・送料300円で自動計算されます。<br>
+                    売却サイトを選択すると確定利益が計上されます。
+                </div>
+                {% endif %}
+                <button onclick="editItem('{{ d.id }}')">✏️ 編集</button>
+            </div>
             {% endfor %}
-        </table>
+        {% else %}
+            <div class="loading">商品がまだ登録されていません</div>
+        {% endif %}
     </div>
 </div>
 
-<!-- フローティング追加ボタン -->
-<button class="floating-add" onclick="showAddModal()">+</button>
+<!-- フローティングアクションボタン -->
+<button class="fab" onclick="openAddModal()">+</button>
 
-<!-- 追加モーダル -->
+<!-- 商品追加モーダル -->
 <div id="addModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <div class="modal-title">➕ 新しい商品を追加</div>
-            <button class="close-btn" onclick="closeAddModal()">×</button>
+            <div class="modal-title">✨ 新規商品登録</div>
+            <span class="close" onclick="closeModal('addModal')">&times;</span>
         </div>
-        
-        <form method="post" action="/add">
-            <span class="date-guide">商品名</span>
-            <input type="text" name="name" placeholder="例: ミッフィー ぬいぐるみ" required>
+        <form method="POST" action="/add">
+            <input type="text" name="name" placeholder="商品名" required>
+            <input type="date" name="buy_date" value="{{ today }}" required>
             
-            <span class="date-guide">購入日</span>
-            <input type="date" name="buy_date" required>
-            
-            <span class="date-guide">仕入れ価格</span>
-            <input type="number" name="buy_price" placeholder="500" required>
-            
-            <span class="date-guide">購入先</span>
             <select name="buy_platform" required>
-                <option>お店</option><option>SHEIN</option><option>TEMU</option><option>アリエク</option><option>百均</option>
+                <option value="">購入先を選択</option>
+                <option value="お店">お店</option>
+                <option value="SHEIN">SHEIN</option>
+                <option value="TEMU">TEMU</option>
+                <option value="アリエク">アリエク</option>
+                <option value="百均">百均</option>
             </select>
             
-            <span class="date-guide">商品分類</span>
-            <select name="category" required>
-                <option>ガチャ</option><option>ステッカー</option><option>服</option><option>文房具</option><option>雑貨</option>
+            <select name="category" id="add_category" required onchange="requestAISuggestion()">
+                <option value="">カテゴリを選択</option>
+                <option value="ガチャ">ガチャ</option>
+                <option value="ステッカー">ステッカー</option>
+                <option value="服">服</option>
+                <option value="文房具">文房具</option>
+                <option value="雑貨">雑貨</option>
             </select>
             
-            <span class="date-guide">販売状況</span>
-            <select name="sell_site" onchange="toggleSellFields(this, 'add')">
-                <option value="">未売却</option>
-                <option>ラクマ</option><option>ヤフーフリマ</option><option>メルカリ</option>
+            <input type="number" name="buy_price" id="add_buy_price" placeholder="購入価格" step="1" required onchange="requestAISuggestion()">
+            
+            <!-- AI価格提案エリア -->
+            <div id="ai_suggestion" style="display: none;"></div>
+            
+            <input type="number" name="sell_price" id="add_sell_price" placeholder="販売価格（未売却でも入力可）" step="1">
+            
+            <select name="sell_site" id="add_sell_site" onchange="toggleSellDate('add')">
+                <option value="">売却状況を選択</option>
+                <option value="メルカリ">メルカリで売却済み</option>
+                <option value="ラクマ">ラクマで売却済み</option>
+                <option value="ヤフーフリマ">ヤフーフリマで売却済み</option>
             </select>
             
-            <div id="add_sell_fields" style="display: none;">
-                <span class="date-guide">売却日</span>
-                <input type="date" name="sell_date">
-                
-                <span class="date-guide">販売価格</span>
-                <input type="number" name="sell_price" placeholder="800">
-                
-                <span class="date-guide">送料（自己負担分）</span>
-                <input type="number" name="shipping" placeholder="200" value="0">
+            <div id="add_sell_date_container" style="display: none;">
+                <input type="date" name="sell_date" id="add_sell_date">
+                <input type="number" name="shipping" placeholder="送料" step="1">
             </div>
             
-            <button type="submit" class="btn btn-primary">✅ 追加する</button>
-            <button type="button" class="btn btn-cancel" onclick="closeAddModal()">キャンセル</button>
+            <button type="submit">💾 登録する</button>
         </form>
     </div>
 </div>
 
-<!-- 編集モーダル -->
+<!-- 商品編集モーダル -->
 <div id="editModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <div class="modal-title">✏️ 商品を編集</div>
-            <button class="close-btn" onclick="closeEditModal()">×</button>
+            <div class="modal-title">✏️ 商品編集</div>
+            <span class="close" onclick="closeModal('editModal')">&times;</span>
         </div>
-        
-        <form method="post" action="/edit">
-            <input type="hidden" id="edit_id" name="id">
+        <form method="POST" action="/edit" id="editForm">
+            <input type="hidden" name="id" id="edit_id">
+            <input type="text" name="name" id="edit_name" placeholder="商品名" required>
+            <input type="date" name="buy_date" id="edit_buy_date" required>
             
-            <span class="date-guide">商品名</span>
-            <input type="text" id="edit_name" name="name" required>
-            
-            <span class="date-guide">購入日</span>
-            <input type="date" id="edit_buy_date" name="buy_date" required>
-            
-            <span class="date-guide">仕入れ価格</span>
-            <input type="number" id="edit_buy_price" name="buy_price" required>
-            
-            <span class="date-guide">購入先</span>
-            <select id="edit_buy_platform" name="buy_platform" required>
-                <option>お店</option><option>SHEIN</option><option>TEMU</option><option>アリエク</option><option>百均</option>
+            <select name="buy_platform" id="edit_buy_platform" required>
+                <option value="">購入先を選択</option>
+                <option value="お店">お店</option>
+                <option value="SHEIN">SHEIN</option>
+                <option value="TEMU">TEMU</option>
+                <option value="アリエク">アリエク</option>
+                <option value="百均">百均</option>
             </select>
             
-            <span class="date-guide">商品分類</span>
-            <select id="edit_category" name="category" required>
-                <option>ガチャ</option><option>ステッカー</option><option>服</option><option>文房具</option><option>雑貨</option>
+            <select name="category" id="edit_category" required>
+                <option value="">カテゴリを選択</option>
+                <option value="ガチャ">ガチャ</option>
+                <option value="ステッカー">ステッカー</option>
+                <option value="服">服</option>
+                <option value="文房具">文房具</option>
+                <option value="雑貨">雑貨</option>
             </select>
             
-            <span class="date-guide">販売状況</span>
-            <select id="edit_sell_site" name="sell_site" onchange="toggleSellFields(this, 'edit')">
-                <option value="">未売却</option>
-                <option>ラクマ</option><option>ヤフーフリマ</option><option>メルカリ</option>
+            <input type="number" name="buy_price" id="edit_buy_price" placeholder="購入価格" step="1" required>
+            <input type="number" name="sell_price" id="edit_sell_price" placeholder="販売価格（未売却でも入力可）" step="1">
+            
+            <select name="sell_site" id="edit_sell_site" onchange="toggleSellDate('edit')">
+                <option value="">売却状況を選択</option>
+                <option value="メルカリ">メルカリで売却済み</option>
+                <option value="ラクマ">ラクマで売却済み</option>
+                <option value="ヤフーフリマ">ヤフーフリマで売却済み</option>
             </select>
             
-            <div id="edit_sell_fields" style="display: none;">
-                <span class="date-guide">売却日</span>
-                <input type="date" id="edit_sell_date" name="sell_date">
-                
-                <span class="date-guide">販売価格</span>
-                <input type="number" id="edit_sell_price" name="sell_price">
-                
-                <span class="date-guide">送料（自己負担分）</span>
-                <input type="number" id="edit_shipping" name="shipping" value="0">
+            <div id="edit_sell_date_container" style="display: none;">
+                <input type="date" name="sell_date" id="edit_sell_date">
+                <input type="number" name="shipping" id="edit_shipping" placeholder="送料" step="1">
             </div>
             
-            <button type="submit" class="btn btn-primary">✅ 更新を保存</button>
-            <button type="button" class="btn btn-cancel" onclick="closeEditModal()">キャンセル</button>
+            <button type="submit">💾 更新する</button>
+            <button type="button" class="delete-btn" onclick="deleteItem()">🗑️ 削除</button>
         </form>
-    </div>
-</div>
-
-<!-- AI提案モーダル -->
-<div id="aiModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <div class="modal-title">🤖 AI価格提案</div>
-            <button class="close-btn" onclick="closeAIModal()">×</button>
-        </div>
-        <div id="aiContent">
-            <div class="ai-loading">分析中...</div>
-        </div>
     </div>
 </div>
 
 <script>
-// 販売状況に応じて売却フィールドを表示/非表示
-function toggleSellFields(select, prefix) {
-    const fieldsDiv = document.getElementById(prefix + '_sell_fields');
-    if (select.value) {
-        fieldsDiv.style.display = 'block';
+// モーダル制御
+function openAddModal() {
+    document.getElementById('addModal').style.display = 'block';
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+// 売却日フィールドの表示切替
+function toggleSellDate(prefix) {
+    const sellSite = document.getElementById(prefix + '_sell_site').value;
+    const container = document.getElementById(prefix + '_sell_date_container');
+    
+    if (sellSite) {
+        container.style.display = 'block';
+        document.getElementById(prefix + '_sell_date').required = true;
     } else {
-        fieldsDiv.style.display = 'none';
+        container.style.display = 'none';
+        document.getElementById(prefix + '_sell_date').required = false;
     }
 }
 
-// モーダル制御
-function showAddModal() {
-    document.getElementById('addModal').classList.add('active');
-    document.body.style.overflow = 'hidden';
-}
+// 商品編集
+const itemsData = {{ data|tojson }};
 
-function closeAddModal() {
-    document.getElementById('addModal').classList.remove('active');
-    document.body.style.overflow = '';
-}
-
-function showEditModal(item) {
+function editItem(id) {
+    const item = itemsData.find(d => d.id === id);
+    if (!item) return;
+    
     document.getElementById('edit_id').value = item.id;
     document.getElementById('edit_name').value = item.name;
-    document.getElementById('edit_buy_date').value = item.buy_date || '';
-    document.getElementById('edit_buy_price').value = item.buy_price;
+    document.getElementById('edit_buy_date').value = item.buy_date;
     document.getElementById('edit_buy_platform').value = item.buy_platform;
     document.getElementById('edit_category').value = item.category;
+    document.getElementById('edit_buy_price').value = item.buy_price;
+    document.getElementById('edit_sell_price').value = item.sell_price || '';
     document.getElementById('edit_sell_site').value = item.sell_site || '';
+    document.getElementById('edit_sell_date').value = item.sell_date || '';
+    document.getElementById('edit_shipping').value = item.shipping || '';
     
-    // 売却フィールドの表示/非表示
-    const sellFields = document.getElementById('edit_sell_fields');
-    if (item.sell_site) {
-        sellFields.style.display = 'block';
-        document.getElementById('edit_sell_date').value = item.sell_date || '';
-        document.getElementById('edit_sell_price').value = item.sell_price || '';
-        document.getElementById('edit_shipping').value = item.shipping || 0;
-    } else {
-        sellFields.style.display = 'none';
+    toggleSellDate('edit');
+    document.getElementById('editModal').style.display = 'block';
+}
+
+function deleteItem() {
+    const id = document.getElementById('edit_id').value;
+    if (confirm('本当に削除しますか？')) {
+        window.location.href = '/delete/' + id;
+    }
+}
+
+// AI価格提案
+async function requestAISuggestion() {
+    const category = document.getElementById('add_category').value;
+    const buyPrice = parseFloat(document.getElementById('add_buy_price').value);
+    
+    if (!category || !buyPrice) {
+        document.getElementById('ai_suggestion').style.display = 'none';
+        return;
     }
     
-    document.getElementById('editModal').classList.add('active');
-    document.body.style.overflow = 'hidden';
-}
-
-function closeEditModal() {
-    document.getElementById('editModal').classList.remove('active');
-    document.body.style.overflow = '';
-}
-
-function showAISuggestion(item) {
-    document.getElementById('aiModal').classList.add('active');
-    document.body.style.overflow = 'hidden';
-    
-    // AI提案を取得
-    fetch('/ai-suggest', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(item)
-    })
-    .then(response => response.json())
-    .then(data => {
-        const content = `
+    try {
+        const response = await fetch('/ai-suggest', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ category, buy_price: buyPrice })
+        });
+        
+        const data = await response.json();
+        
+        const html = `
             <div class="ai-suggestion">
-                <div class="ai-suggestion-title">💡 おすすめ販売価格</div>
-                <div class="ai-suggestion-content">
-                    <strong style="font-size: 20px; color: #6d28d9;">¥${data.suggested_price.toLocaleString()}</strong><br>
-                    <div style="margin-top: 8px;">
-                        予想利益: <strong style="color: ${data.expected_profit > 0 ? '#28a745' : '#dc3545'};">¥${data.expected_profit.toLocaleString()}</strong> (${data.expected_rate}%)<br>
-                        <span style="font-size: 11px; color: #888;">※平均手数料8%で概算</span>
-                    </div>
+                <div class="ai-title">🤖 AI価格提案</div>
+                <div class="ai-price">¥${data.suggested_price.toLocaleString()}</div>
+                <div class="ai-details">
+                    <strong>予想利益:</strong> ¥${data.expected_profit.toLocaleString()} (${data.expected_rate}%)<br>
+                    ${data.analysis}<br><br>
+                    ${data.advice}
                 </div>
-            </div>
-            <div class="ai-suggestion">
-                <div class="ai-suggestion-title">📈 分析結果</div>
-                <div class="ai-suggestion-content">${data.analysis}</div>
-            </div>
-            <div class="ai-suggestion">
-                <div class="ai-suggestion-title">💬 アドバイス</div>
-                <div class="ai-suggestion-content">${data.advice}</div>
+                <button type="button" onclick="applySuggestion(${data.suggested_price})" 
+                        style="margin-top: 12px; background: #4caf50;">
+                    ✨ この価格を適用
+                </button>
             </div>
         `;
-        document.getElementById('aiContent').innerHTML = content;
-    })
-    .catch(error => {
-        document.getElementById('aiContent').innerHTML = '<div class="ai-suggestion"><div class="ai-suggestion-content">エラーが発生しました</div></div>';
-    });
+        
+        document.getElementById('ai_suggestion').innerHTML = html;
+        document.getElementById('ai_suggestion').style.display = 'block';
+    } catch (error) {
+        console.error('AI提案エラー:', error);
+    }
 }
 
-function closeAIModal() {
-    document.getElementById('aiModal').classList.remove('active');
-    document.body.style.overflow = '';
+function applySuggestion(price) {
+    document.getElementById('add_sell_price').value = price;
 }
 
-// 商品名の展開/折りたたみ
-function toggleName(element) {
-    element.classList.toggle('truncate');
-    element.classList.toggle('expanded');
+// モーダル外クリックで閉じる
+window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+    }
 }
 
-// モーダル背景クリックで閉じる
-document.querySelectorAll('.modal').forEach(modal => {
-    modal.addEventListener('click', function(e) {
-        if (e.target === this) {
-            this.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-    });
-});
-
-// グラフ描画
-new Chart(document.getElementById("bar"), {
+// Chart.js設定
+{% if platforms %}
+new Chart(document.getElementById("platformChart"), {
     type: "bar",
     data: {
-        labels: {{ platforms|safe }},
+        labels: {{ platforms|tojson }},
         datasets: [{
-            label: "平均利益率（％）",
-            data: {{ rates|safe }},
-            backgroundColor: "#ff6fae",
-            borderColor: "#ff4d94",
-            borderWidth: 2,
+            label: "利益率 (%)",
+            data: {{ rates|tojson }},
+            backgroundColor: {{ platforms|map('extract', platform_colors, default='#ff6fae')|list|tojson }},
             borderRadius: 8
         }]
     },
     options: {
         responsive: true,
         maintainAspectRatio: false,
-        scales: { 
+        scales: {
             y: { 
                 beginAtZero: true, 
                 ticks: { 
@@ -952,6 +933,7 @@ new Chart(document.getElementById("bar"), {
         }
     }
 });
+{% endif %}
 
 {% for site, pdata in sell_pies.items() %}
 new Chart(document.getElementById("sell_{{ loop.index }}"), {
@@ -993,18 +975,14 @@ def index():
     
     total_profit = sum(d.get("profit", 0) for d in sold_items)
     
-    # 見込み利益の計算（未売却商品の平均売却倍率を使用、送料抜き）
-    if sold_items:
-        avg_multiplier = sum(d.get("sell_price", 0) / d.get("buy_price", 1) for d in sold_items) / len(sold_items)
-    else:
-        avg_multiplier = 1.5  # デフォルト倍率
-    
+    # 見込み利益の計算（手数料7.5%、送料300円の固定値で計算）
     expected_profit = 0
     for item in unsold_items:
-        estimated_sell = item.get("buy_price", 0) * avg_multiplier
-        # 手数料は平均10%として計算（送料は含めない）
-        estimated_fee = estimated_sell * 0.10
-        expected_profit += estimated_sell - item.get("buy_price", 0) - estimated_fee
+        sell_price = item.get("sell_price", 0)
+        if sell_price > 0:  # 販売価格が入力されている場合のみ計算
+            estimated_fee = sell_price * 0.075  # 手数料7.5%
+            estimated_shipping = 300  # 送料300円
+            expected_profit += sell_price - item.get("buy_price", 0) - estimated_fee - estimated_shipping
     
     platforms = list(set(d.get("buy_platform") for d in DATA if d.get("buy_platform")))
     
@@ -1029,7 +1007,8 @@ def index():
                                  platform_colors=PLATFORM_COLORS, 
                                  category_colors=CATEGORY_COLORS,
                                  use_db=USE_DATABASE,
-                                 data_count=len(DATA))
+                                 data_count=len(DATA),
+                                 today=datetime.now().strftime("%Y-%m-%d"))
 
 @app.route("/backup")
 def backup():
@@ -1058,12 +1037,14 @@ def add():
     ship = float(request.form.get("shipping") or 0)
     site = request.form.get("sell_site")
     
-    # 利益計算（売却済みの時のみ有効、未売却時は0）
-    if site:
+    # 利益計算
+    if site and sell > 0:
+        # 売却済みの場合：実際の手数料と送料で計算
         fee = round(sell * SELL_FEES.get(site, 0), 0)
         profit = round(sell - buy - ship - fee, 0)
         rate = round((profit / buy * 100), 1) if buy > 0 else 0
     else:
+        # 未売却の場合：利益は0（見込み利益は別途計算）
         fee, profit, rate = 0, 0, 0
 
     DATA.append({
@@ -1099,12 +1080,14 @@ def edit():
             item["sell_site"] = request.form.get("sell_site")
             item["sell_date"] = request.form.get("sell_date") if item["sell_site"] else ""
             
-            # 再計算（売却済みの場合のみ利益を計上）
-            if item.get("sell_site"):
+            # 再計算
+            if item.get("sell_site") and item.get("sell_price") > 0:
+                # 売却済みの場合：実際の手数料と送料で計算
                 item["fee"] = round(item["sell_price"] * SELL_FEES.get(item["sell_site"], 0), 0)
                 item["profit"] = round(item["sell_price"] - item["buy_price"] - item.get("shipping", 0) - item["fee"], 0)
                 item["rate"] = round((item["profit"] / item["buy_price"] * 100), 1) if item["buy_price"] > 0 else 0
             else:
+                # 未売却の場合：利益は0
                 item["fee"], item["profit"], item["rate"] = 0, 0, 0
             break
     save_data()
@@ -1137,13 +1120,14 @@ def ai_suggest():
         max_price = 0
         min_price = 0
     
-    # 推奨価格を計算（平均手数料8%で概算）
+    # 推奨価格を計算
     buy_price = item.get("buy_price", 0)
     suggested_price = round(buy_price * avg_multiplier, -1)  # 10円単位で丸める
     
-    # 予想利益を計算（平均手数料8%として概算）
-    avg_fee = suggested_price * 0.08
-    expected_profit = round(suggested_price - buy_price - avg_fee, 0)
+    # 予想利益を計算（手数料7.5%、送料300円で計算）
+    estimated_fee = suggested_price * 0.075
+    estimated_shipping = 300
+    expected_profit = round(suggested_price - buy_price - estimated_fee - estimated_shipping, 0)
     expected_rate = round((expected_profit / buy_price * 100), 1) if buy_price > 0 else 0
     
     # 分析メッセージ
