@@ -587,7 +587,7 @@ button:active {
 <div class="mobile-container">
     <!-- ヘッダー -->
     <div class="header">
-        <h1>💖 フリマ損益計算 💖</h1>
+        <h1>💖うんち💩💖</h1>
         <div class="subtitle">スマートに稼ぐ💰</div>
         <div class="db-status">
             {% if use_db %}
