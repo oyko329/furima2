@@ -54,7 +54,8 @@ if USE_DATABASE:
             try:
                 conn = get_db_connection()
                 cur = conn.cursor()
-                cur.execute('SELECT * FROM items ORDER BY buy_date DESC')
+                # buy_dateがNULLの場合は最後に表示
+                cur.execute('SELECT * FROM items ORDER BY COALESCE(buy_date, \'9999-12-31\') DESC')
                 rows = cur.fetchall()
                 DATA = [dict(row) for row in rows]
                 cur.close()
@@ -85,6 +86,22 @@ if USE_DATABASE:
         
         # データベース初期化
         init_db()
+        
+        # 既存データのbuy_dateを補完（マイグレーション）
+        try:
+            conn = get_db_connection()
+            cur = conn.cursor()
+            # buy_dateがNULLまたは空の場合、現在日付で更新
+            cur.execute("""
+                UPDATE items 
+                SET buy_date = CURRENT_DATE::text 
+                WHERE buy_date IS NULL OR buy_date = ''
+            """)
+            conn.commit()
+            cur.close()
+            conn.close()
+        except Exception as e:
+            print(f"Migration warning: {e}")
         
     except ImportError:
         print("psycopg2 not installed, falling back to JSON file")
@@ -588,9 +605,9 @@ td:last-child {
         <h1>💰 フリマ損益計算</h1>
         <div class="subtitle">かしこく売って、賢く稼ぐ</div>
         {% if use_db %}
-        <div class="db-status">🔗 PostgreSQL接続済み（データは永続保存されます）</div>
+        <div class="db-status">🔗 PostgreSQL接続済み（データは永続保存されます）<br>登録件数: {{ data_count }}件 | <a href="/backup" style="color: white; text-decoration: underline;">バックアップ</a></div>
         {% else %}
-        <div class="db-status">📁 ローカルファイル保存</div>
+        <div class="db-status">📁 ローカルファイル保存 | 登録件数: {{ data_count }}件</div>
         {% endif %}
     </div>
 
@@ -1011,7 +1028,28 @@ def index():
                                  expected_profit=expected_profit,
                                  platform_colors=PLATFORM_COLORS, 
                                  category_colors=CATEGORY_COLORS,
-                                 use_db=USE_DATABASE)
+                                 use_db=USE_DATABASE,
+                                 data_count=len(DATA))
+
+@app.route("/backup")
+def backup():
+    """データベースのバックアップをJSON形式でダウンロード"""
+    from flask import Response
+    import json
+    from datetime import datetime
+    
+    backup_data = {
+        "backup_date": datetime.now().isoformat(),
+        "items": DATA
+    }
+    
+    json_str = json.dumps(backup_data, ensure_ascii=False, indent=2)
+    
+    return Response(
+        json_str,
+        mimetype='application/json',
+        headers={'Content-Disposition': f'attachment;filename=furima_backup_{datetime.now().strftime("%Y%m%d_%H%M%S")}.json'}
+    )
 
 @app.route("/add", methods=["POST"])
 def add():
