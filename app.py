@@ -605,9 +605,20 @@ td:last-child {
         <h1>うんち💩</h1>
         <div class="subtitle">かしこく売って、賢く稼ぐ</div>
         {% if use_db %}
-        <div class="db-status">🔗 PostgreSQL接続済み（データは永続保存されます）<br>登録件数: {{ data_count }}件 | <a href="/backup" style="color: white; text-decoration: underline;">バックアップ</a></div>
+        <div class="db-status">
+            🔗 PostgreSQL接続済み（データは永続保存されます）<br>
+            登録件数: {{ data_count }}件 | 
+            <a href="/backup" style="color: white; text-decoration: underline;">💾 バックアップ</a> | 
+            <a href="#" onclick="document.getElementById('restoreInput').click(); return false;" style="color: white; text-decoration: underline;">📥 復元</a>
+            <form id="restoreForm" action="/restore" method="post" enctype="multipart/form-data" style="display: none;">
+                <input type="file" id="restoreInput" name="backup_file" accept=".json" onchange="if(confirm('バックアップファイルからデータを復元しますか？現在のデータは上書きされます。')) this.form.submit();">
+            </form>
+        </div>
         {% else %}
-        <div class="db-status">📁 ローカルファイル保存 | 登録件数: {{ data_count }}件</div>
+        <div class="db-status">
+            📁 ローカルファイル保存 | 登録件数: {{ data_count }}件 | 
+            <a href="/backup" style="color: white; text-decoration: underline;">💾 バックアップ</a>
+        </div>
         {% endif %}
     </div>
 
@@ -924,6 +935,13 @@ document.querySelectorAll('.modal').forEach(modal => {
     });
 });
 
+// 復元成功時の通知
+if (window.location.search.includes('restored=true')) {
+    alert('✅ バックアップからデータを復元しました！');
+    // URLパラメータを削除
+    window.history.replaceState({}, document.title, window.location.pathname);
+}
+
 // グラフ描画
 new Chart(document.getElementById("bar"), {
     type: "bar",
@@ -1053,6 +1071,32 @@ def backup():
         mimetype='application/json',
         headers={'Content-Disposition': f'attachment;filename=furima_backup_{datetime.now().strftime("%Y%m%d_%H%M%S")}.json'}
     )
+
+@app.route("/restore", methods=["POST"])
+def restore():
+    """バックアップファイルからデータを復元"""
+    global DATA
+    try:
+        if 'backup_file' not in request.files:
+            return jsonify({"error": "ファイルが選択されていません"}), 400
+        
+        file = request.files['backup_file']
+        if file.filename == '':
+            return jsonify({"error": "ファイルが選択されていません"}), 400
+        
+        # JSONファイルを読み込み
+        backup_data = json.load(file)
+        
+        # データを復元
+        if 'items' in backup_data:
+            DATA = backup_data['items']
+            save_data()
+            return redirect("/?restored=true")
+        else:
+            return jsonify({"error": "無効なバックアップファイル形式です"}), 400
+            
+    except Exception as e:
+        return jsonify({"error": f"復元エラー: {str(e)}"}), 500
 
 @app.route("/add", methods=["POST"])
 def add():
