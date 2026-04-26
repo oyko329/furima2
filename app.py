@@ -603,7 +603,7 @@ td:last-child {
     <!-- ヘッダー -->
     <div class="header">
         <h1>うんち💩</h1>
-        <div class="subtitle">かしこく売って、賢く稼ぐ</div>
+        <div class="subtitle">月の利益３％いただきます</div>
         {% if use_db %}
         <div class="db-status">
             🔗 PostgreSQL接続済み（データは永続保存されます）<br>
